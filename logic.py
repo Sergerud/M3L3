@@ -11,7 +11,7 @@ class DB_Manager:
     def create_tables(self):
         conn = sqlite3.connect(self.database)
         with conn:
-            conn.execute('''CREATE TABLE projects (
+            conn.execute('''CREATE TABLE IF NOT EXISTS projects (
                             project_id INTEGER PRIMARY KEY,
                             user_id INTEGER,
                             project_name TEXT NOT NULL,
@@ -20,22 +20,29 @@ class DB_Manager:
                             status_id INTEGER,
                             FOREIGN KEY(status_id) REFERENCES status(status_id)
                         )''') 
-            conn.execute('''CREATE TABLE skills (
+            #table_name = 'projects'
+            #new_column_name = 'photo'
+            #new_column_type = 'TEXT'
+                # Выполнение запроса на добавление столбца
+            #alter_query = f"ALTER TABLE {table_name} ADD COLUMN {new_column_name} {new_column_type}"
+            #conn.execute(alter_query)
+            
+            conn.execute('''CREATE TABLE IF NOT EXISTS skills (
                             skill_id INTEGER PRIMARY KEY,
                             skill_name TEXT
                         )''')
-            conn.execute('''CREATE TABLE project_skills (
+            conn.execute('''CREATE TABLE IF NOT EXISTS project_skills (
                             project_id INTEGER,
                             skill_id INTEGER,
                             FOREIGN KEY(project_id) REFERENCES projects(project_id),
                             FOREIGN KEY(skill_id) REFERENCES skills(skill_id)
                         )''')
-            conn.execute('''CREATE TABLE status (
+            conn.execute('''CREATE TABLE IF NOT EXISTS status (
                             status_id INTEGER PRIMARY KEY,
                             status_name TEXT
                         )''')
             conn.commit()
-
+    
     def __executemany(self, sql, data):
         conn = sqlite3.connect(self.database)
         with conn:
@@ -138,5 +145,6 @@ class DB_Manager:
 if __name__ == '__main__':
     manager = DB_Manager(DATABASE)
     manager.create_tables()
+    
     manager.default_insert()
     
